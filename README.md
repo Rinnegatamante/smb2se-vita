@@ -9,6 +9,11 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
+### v1.1
+
+- Reworked Livearea assets.
+- Added an option to use left analog in place of accelerometer.
+
 ### v1.0
 
 - Initial release.
