@@ -889,6 +889,26 @@ int main(int argc, char *argv[]) {
 	scePowerSetBusClockFrequency(222);
 	scePowerSetGpuClockFrequency(222);
 	scePowerSetGpuXbarClockFrequency(166);
+	
+	uint32_t use_analogs = 0;
+	if (!use_analogs) {
+		SceAppUtilAppEventParam eventParam;
+		sceClibMemset(&eventParam, 0, sizeof(SceAppUtilAppEventParam));
+		sceAppUtilReceiveAppEvent(&eventParam);
+		if (eventParam.type == 0x05) {
+			char buffer[2048];
+			sceAppUtilAppEventParseLiveArea(&eventParam, buffer);
+			if (strstr(buffer, "analogs"))
+				use_analogs = 1;
+		}
+	}
+	
+	if (use_analogs)
+		sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
+	else {
+		sceMotionReset();
+		sceMotionStartSampling();
+	}
 
 	if (check_kubridge() < 0)
 		fatal_error("Error kubridge.skprx is not installed.");
@@ -966,9 +986,6 @@ int main(int argc, char *argv[]) {
 	int lastX[SCE_TOUCH_MAX_REPORT] = {-1, -1, -1, -1, -1, -1, -1, -1};
 	int lastY[SCE_TOUCH_MAX_REPORT] = {-1, -1, -1, -1, -1, -1, -1, -1};
 	
-	sceMotionReset();
-	sceMotionStartSampling();
-	
 	for (;;) {
 		SceTouchData touch;
 		sceTouchPeek(SCE_TOUCH_PORT_FRONT, &touch, 1);
@@ -988,11 +1005,20 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-
-		SceMotionSensorState sensor;
-		sceMotionGetSensorState(&sensor, 1);
-		if (accel_instance)
-			FeedAccelData(sensor.accelerometer.y, -sensor.accelerometer.x, sensor.accelerometer.z);
+		
+		if (accel_instance) {
+			if (use_analogs) {
+				SceCtrlData pad;
+				sceCtrlPeekBufferPositiveExt2(0, &pad, 1);
+				float lx = (float)pad.lx / 255.0f;
+				float ly = (float)pad.ly / 255.0f;
+				FeedAccelData(0.2f - 2.0f * ly, 1.0f - 2.0f * lx, -0.676981f);
+			} else {
+				SceMotionSensorState sensor;
+				sceMotionGetSensorState(&sensor, 1);
+				FeedAccelData(sensor.accelerometer.y, -sensor.accelerometer.x, sensor.accelerometer.z);
+			}
+		}
 
 		Java_com_ooi_android_SharkRenderer_nativeRender();
 		vglSwapBuffers(GL_FALSE);

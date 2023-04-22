@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<livearea style="ad0" format-ver="01.00" content-rev="1">
+<livearea style="a4" format-ver="01.00" content-rev="1">
 	<livearea-background>
 		<image>bg0.png</image>
 	</livearea-background>
-	<frame id="frame1" >
-        <liveitem default="on">
-            <target>psla:</target>
+	<gate>
+		<startup-image>startup.png</startup-image>
+	</gate>
+	
+	<frame id="frame5" >
+        <liveitem>
+            <target>psla:analogs</target>
+			<text valign="bottom" align="left" text-align="left" word-wrap="off" ellipsis="on">
+				<str size="20" color="#ffffff" shadow="on">  Use analogs controls</str>
+			</text>
         </liveitem>
     </frame>
 </livearea>
