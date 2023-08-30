@@ -9,6 +9,11 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
+### v1.2
+
+- Updated to latest vitaGL build.
+- Added trophies support (requires NoTrpDrm).
+
 ### v1.1
 
 - Reworked Livearea assets.
@@ -43,6 +48,7 @@ In order to properly install the game, you'll have to follow these steps precise
 - Extract the folder `assets` inside `ux0:data/smb2`.
 - Grab cache data (can be obtained by running once the application on your phone and letting it download required game data files) in form of a `assets` folder (usually can be found in `Android/data/com.ooi.android.smb2`).
 - Place the `assets` folder from the cache data inside `ux0:data/smb2`.
+- **Optional**: For trophies to be unlockable, install [NoTrpDRM](https://github.com/Rinnegatamante/NoTrpDrm).
 
 ## Build Instructions (For Developers)
 

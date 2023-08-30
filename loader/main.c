@@ -41,6 +41,7 @@
 #include "dialog.h"
 #include "so_util.h"
 #include "sha1.h"
+#include "trophies.h"
 
 //#define ENABLE_DEBUG
 
@@ -324,6 +325,10 @@ void SetPitch(void *this, int unk, float pitch) {
 	audio_set_pitch(this, pitch);
 }
 
+void UnlockAchievement(void *this, int id) {
+	trophies_unlock(id + 1);
+}
+
 void patch_game(void) {
 	hook_addr(so_symbol(&smb2_mod, "_ZN5shark19AndroidJNIInterface14FlurryLogEventEPKcSt3mapISsSsSt4lessISsESaISt4pairIKSsSsEEE"), (uintptr_t)&ret0);
 	hook_addr(so_symbol(&smb2_mod, "_ZN7android9GetJNIEnvEv"), (uintptr_t)&GetJNIEnv);
@@ -334,6 +339,7 @@ void patch_game(void) {
 	accel_hook = hook_addr(so_symbol(&smb2_mod, "_ZN2io13Accelerometer6EnableEv"), (uintptr_t)&EnableAccelerometer);
 	hook_addr(so_symbol(&smb2_mod, "_ZN5shark19AndroidJNIInterface9SetVolumeEif"), (uintptr_t)&SetVolume);
 	hook_addr(so_symbol(&smb2_mod, "_ZN5shark19AndroidJNIInterface8SetPitchEif"), (uintptr_t)&SetPitch);
+	hook_addr(so_symbol(&smb2_mod, "_ZN18AchievementManager17UnlockAchievementEi"), (uintptr_t)&UnlockAchievement);
 }
 
 extern void *__aeabi_atexit;
@@ -933,6 +939,15 @@ int main(int argc, char *argv[]) {
 	vglSetupGarbageCollector(127, 0x20000);
 	vglInitExtended(0, SCREEN_W, SCREEN_H, MEMORY_VITAGL_THRESHOLD_MB * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
 	eglSwapInterval(0, 2);
+	
+	// Initing trophy system
+	SceIoStat st;
+	int r = trophies_init();
+	if (r < 0 && sceIoGetstat(TROPHIES_FILE, &st) < 0) {
+		FILE *f = fopen(TROPHIES_FILE, "w");
+		fclose(f);
+		warning("This game features unlockable trophies but NoTrpDrm is not installed. If you want to be able to unlock trophies, please install it.");
+	}
 
 	memset(fake_vm, 'A', sizeof(fake_vm));
 	*(uintptr_t *)(fake_vm + 0x00) = (uintptr_t)fake_vm; // just point to itself...

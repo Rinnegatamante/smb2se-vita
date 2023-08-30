@@ -23,6 +23,7 @@ add_executable(smb2se
   loader/dialog.c
   loader/so_util.c
   loader/sha1.c
+  loader/trophies.c
   loader/audio_player.cpp
 )
 
@@ -60,6 +61,7 @@ target_link_libraries(smb2se
   SceTouch_stub
   SceVshBridge_stub
   SceMotion_stub
+  SceNpTrophy_stub
 )
 
 vita_create_self(eboot.bin smb2se UNSAFE)
@@ -70,6 +72,7 @@ vita_create_vpk(smb2se.vpk ${VITA_TITLEID} eboot.bin
        ${CMAKE_SOURCE_DIR}/livearea/bg0.png sce_sys/livearea/contents/bg0.png
        ${CMAKE_SOURCE_DIR}/livearea/startup.png sce_sys/livearea/contents/startup.png
        ${CMAKE_SOURCE_DIR}/livearea/template.xml sce_sys/livearea/contents/template.xml
+       ${CMAKE_SOURCE_DIR}/livearea/TROPHY.TRP sce_sys/trophy/SMBS00001_00/TROPHY.TRP
 )
 
 add_custom_target(copy
