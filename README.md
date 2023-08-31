@@ -9,6 +9,10 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
+### v1.21
+
+- Fixed analogs mode not working.
+
 ### v1.2
 
 - Updated to latest vitaGL build.
