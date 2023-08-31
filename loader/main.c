@@ -908,13 +908,7 @@ int main(int argc, char *argv[]) {
 				use_analogs = 1;
 		}
 	}
-	
-	if (use_analogs)
-		sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
-	else {
-		sceMotionReset();
-		sceMotionStartSampling();
-	}
+	printf("use_analogs is %u\n", use_analogs);
 
 	if (check_kubridge() < 0)
 		fatal_error("Error kubridge.skprx is not installed.");
@@ -947,6 +941,13 @@ int main(int argc, char *argv[]) {
 		FILE *f = fopen(TROPHIES_FILE, "w");
 		fclose(f);
 		warning("This game features unlockable trophies but NoTrpDrm is not installed. If you want to be able to unlock trophies, please install it.");
+	}
+	
+	if (use_analogs)
+		sceCtrlSetSamplingModeExt(SCE_CTRL_MODE_ANALOG_WIDE);
+	else {
+		sceMotionReset();
+		sceMotionStartSampling();
 	}
 
 	memset(fake_vm, 'A', sizeof(fake_vm));
