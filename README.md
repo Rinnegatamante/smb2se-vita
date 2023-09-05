@@ -9,6 +9,10 @@ By doing so, it's basically as if we emulate a minimalist Android environment in
 
 ## Changelog
 
+### v1.22
+
+- Updated trophies icons to hi-res versions.
+
 ### v1.21
 
 - Fixed analogs mode not working.
