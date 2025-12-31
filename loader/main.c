@@ -661,6 +661,7 @@ static so_default_dynlib default_dynlib[] = {
 	{ "towlower", (uintptr_t)&towlower },
 	{ "towupper", (uintptr_t)&towupper },
 	{ "ungetc", (uintptr_t)&ungetc },
+	{ "ulink", (uintptr_t)&ulink },
 	{ "ungetwc", (uintptr_t)&ungetwc },
 	{ "usleep", (uintptr_t)&usleep },
 	{ "vfprintf", (uintptr_t)&vfprintf },
