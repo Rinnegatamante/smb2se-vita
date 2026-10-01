@@ -51,6 +51,7 @@ void audio_queue_music(char *fname, int loopcount);
 void audio_stop_music();
 void audio_set_music_volume(float volume);
 void audio_remove_sound(int id);
+void audio_stop_sound(int id);
 int audio_play_sound(int id, float volume, float pitch, int loopcount);
 void audio_set_volume(int id, float volume);
 void audio_set_pitch(int id, float pitch);
@@ -129,7 +130,7 @@ int ret1(void) {
 	return 1;
 }
 
-int clock_gettime(int clk_ik, struct timespec *t) {
+int clock_gettime_hook(int clk_ik, struct timespec *t) {
 	struct timeval now;
 	int rv = gettimeofday(&now, NULL);
 	if (rv)
@@ -314,15 +315,15 @@ int SetMusicVolume(void *this, float vol) {
 }
 
 int PlaySound(void *this, int unk, double duration, float volume, float pitch, int loop) {
-	return audio_play_sound(this, volume, pitch, loop);
+	return audio_play_sound((int)(intptr_t)this, volume, pitch, loop);
 }
 
 void SetVolume(void *this, int unk, float volume) {
-	audio_set_volume(this, volume);
+	audio_set_volume((int)(intptr_t)this, volume);
 }
 
 void SetPitch(void *this, int unk, float pitch) {
-	audio_set_pitch(this, pitch);
+	audio_set_pitch((int)(intptr_t)this, pitch);
 }
 
 void UnlockAchievement(void *this, int id) {
@@ -453,7 +454,7 @@ static so_default_dynlib default_dynlib[] = {
 	{ "ceilf", (uintptr_t)&ceilf },
 	{ "clearerr", (uintptr_t)&clearerr },
 	{ "clock", (uintptr_t)&clock },
-	{ "clock_gettime", (uintptr_t)&clock_gettime },
+	{ "clock_gettime", (uintptr_t)&clock_gettime_hook },
 	{ "close", (uintptr_t)&close },
 	{ "cos", (uintptr_t)&cos },
 	{ "cosf", (uintptr_t)&cosf },
@@ -661,7 +662,7 @@ static so_default_dynlib default_dynlib[] = {
 	{ "towlower", (uintptr_t)&towlower },
 	{ "towupper", (uintptr_t)&towupper },
 	{ "ungetc", (uintptr_t)&ungetc },
-	{ "ulink", (uintptr_t)&ulink },
+	{ "ulink", (uintptr_t)&unlink },
 	{ "ungetwc", (uintptr_t)&ungetwc },
 	{ "usleep", (uintptr_t)&usleep },
 	{ "vfprintf", (uintptr_t)&vfprintf },
@@ -759,7 +760,7 @@ int GetStaticMethodID(void *env, void *class, const char *name, const char *sig)
 void CallStaticVoidMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
 	switch (methodID) {
 	case QUEUE_MUSIC:
-		audio_queue_music(args[0], args[1]);
+		audio_queue_music((char *)args[0], args[1]);
 		break;
 	case STOP_MUSIC:
 		audio_stop_music();
@@ -788,7 +789,7 @@ int CallStaticIntMethodV(void *env, void *obj, int methodID, uintptr_t *args) {
 	case GET_SCREEN_HEIGHT:
 		return 544;
 	case BUFFER_SOUND:
-		ret = audio_load_sound(args[0]);
+		ret = (int)(intptr_t)audio_load_sound((char *)args[0]);
 		return -ret;
 	case PLAY_SOUND:
 		return audio_play_sound(args[0], args[2], args[3], args[4]);
